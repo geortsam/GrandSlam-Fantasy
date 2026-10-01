@@ -26,8 +26,9 @@ export function NavLinks() {
           href={l.href}
           aria-current={isActive(l.href) ? "page" : undefined}
           className={cn(
-            "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
-            isActive(l.href) && "bg-muted text-foreground",
+            "relative px-3 py-5 text-sm font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground",
+            isActive(l.href) &&
+              "text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary",
           )}
         >
           {l.label}
@@ -48,8 +49,8 @@ export function MobileNav() {
           href={l.href}
           aria-current={isActive(l.href) ? "page" : undefined}
           className={cn(
-            "shrink-0 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground",
-            isActive(l.href) && "bg-muted text-foreground",
+            "shrink-0 rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground",
+            isActive(l.href) && "bg-primary text-primary-foreground",
           )}
         >
           {l.label}

@@ -40,7 +40,7 @@ export function LiveMatches({
   return (
     <div className="space-y-6">
       {tours.length > 1 && (
-        <div role="group" aria-label="Tour" className="inline-flex rounded-md bg-muted p-1">
+        <div role="group" aria-label="Tour" className="inline-flex rounded-full border bg-card p-1">
           {tours.map((t) => (
             <button
               key={t}
@@ -48,8 +48,8 @@ export function LiveMatches({
               aria-pressed={tour === t}
               onClick={() => setTour(t)}
               className={cn(
-                "rounded-sm px-4 py-1.5 text-sm font-semibold text-muted-foreground",
-                tour === t && "bg-card text-foreground shadow-sm",
+                "rounded-full px-5 py-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground",
+                tour === t && "bg-primary text-primary-foreground",
               )}
             >
               {t}
@@ -63,7 +63,7 @@ export function LiveMatches({
           .sort((a, b) => Number(b.status === "LIVE") - Number(a.status === "LIVE"));
         return (
           <section key={round}>
-            <h2 className="mb-3 font-display text-xl font-bold uppercase">{inRound[0]?.roundName}</h2>
+            <h2 className="mb-3 font-display text-2xl font-extrabold uppercase">{inRound[0]?.roundName}</h2>
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {inRound.map((m) => (
                 <MatchCard key={m.id} match={m} />
@@ -80,7 +80,7 @@ function MatchCard({ match }: { match: LiveMatch }) {
   const isLive = match.status === "LIVE";
   const scheduled = match.status === "SCHEDULED";
   return (
-    <Card className={cn(isLive && "border-live/60 ring-1 ring-live/40")}>
+    <Card className={cn("overflow-hidden", isLive && "border-live/60 ring-1 ring-live/40")}>
       <CardContent className="space-y-2 p-4">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           {isLive ? (
@@ -116,7 +116,7 @@ function PlayerLine({ player, sets, opp }: { player: LiveMatchPlayer; sets: numb
       </div>
       <div className="flex gap-1 tabular-nums" aria-label={`Sets: ${sets.join(", ") || "none"}`}>
         {sets.map((g, i) => (
-          <span key={i} className={cn("w-5 text-center text-sm", g > opp[i] ? "font-bold" : "text-muted-foreground")}>
+          <span key={i} className={cn("w-6 rounded text-center font-display text-lg leading-6", g > opp[i] ? "bg-elevated font-extrabold" : "text-muted-foreground")}>
             {g}
           </span>
         ))}

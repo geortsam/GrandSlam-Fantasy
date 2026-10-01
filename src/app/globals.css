@@ -3,82 +3,95 @@
 @tailwind utilities;
 
 /*
- * GrandSlam Fantasy design tokens: a court-inspired palette.
- * Grass Green (primary), Hardcourt Blue (secondary), Clay Orange (accent).
+ * GrandSlam Fantasy design tokens. Dark is the default theme.
+ *
+ * Brand: Optic Yellow (the tennis ball) is the primary action colour.
+ * Court accents: Grass Green, Hardcourt Blue and Clay Orange mark surfaces.
  * Values are HSL channels. Every foreground/background pair is checked for
  * WCAG AA contrast (4.5:1) by tests/contrast.test.ts.
  */
 @layer base {
   :root {
-    --background: 45 33% 97%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --muted: 45 20% 92%;
-    --muted-foreground: 220 12% 34%;
-    --border: 40 14% 84%;
-    --input: 40 14% 78%;
-    --ring: 142 58% 28%;
+    --background: 222 50% 4%;
+    --foreground: 220 30% 96%;
+    --card: 223 38% 9%;
+    --card-foreground: 220 30% 96%;
+    --elevated: 223 34% 13%;
+    --muted: 223 30% 14%;
+    --muted-foreground: 221 18% 66%;
+    --border: 222 28% 17%;
+    --input: 222 26% 24%;
+    --ring: 72 90% 60%;
 
-    --primary: 142 58% 26%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 213 66% 33%;
-    --secondary-foreground: 0 0% 100%;
-    --accent: 16 72% 38%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 72% 40%;
-    --destructive-foreground: 0 0% 100%;
+    --primary: 72 90% 60%;
+    --primary-foreground: 222 50% 6%;
+    --secondary: 214 92% 66%;
+    --secondary-foreground: 222 50% 6%;
+    --accent: 22 100% 60%;
+    --accent-foreground: 222 50% 6%;
+    --destructive: 352 92% 66%;
+    --destructive-foreground: 222 50% 6%;
 
-    --grass: 142 58% 26%;
-    --grass-foreground: 0 0% 100%;
-    --hard: 213 66% 33%;
-    --hard-foreground: 0 0% 100%;
-    --clay: 16 72% 38%;
-    --clay-foreground: 0 0% 100%;
-    --live: 352 78% 40%;
-    --live-foreground: 0 0% 100%;
+    --grass: 145 62% 50%;
+    --grass-foreground: 222 50% 6%;
+    --hard: 214 92% 66%;
+    --hard-foreground: 222 50% 6%;
+    --clay: 22 100% 60%;
+    --clay-foreground: 222 50% 6%;
+    --live: 352 92% 66%;
+    --live-foreground: 222 50% 6%;
 
-    --positive: 142 64% 24%;
-    --negative: 0 72% 38%;
-    --atp: 213 66% 33%;
-    --wta: 322 60% 36%;
+    --positive: 145 62% 56%;
+    --negative: 352 92% 70%;
+    --atp: 210 95% 72%;
+    --wta: 322 85% 74%;
+    --gold: 45 95% 58%;
+    --silver: 220 15% 78%;
+    --bronze: 25 60% 58%;
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
+    color-scheme: dark;
   }
 
-  .dark {
-    --background: 222 32% 7%;
-    --foreground: 45 25% 95%;
-    --card: 222 28% 11%;
-    --card-foreground: 45 25% 95%;
-    --muted: 222 22% 17%;
-    --muted-foreground: 220 14% 72%;
-    --border: 222 18% 22%;
-    --input: 222 18% 30%;
-    --ring: 142 52% 50%;
+  .light {
+    --background: 220 30% 97%;
+    --foreground: 222 50% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 50% 8%;
+    --elevated: 220 30% 95%;
+    --muted: 220 25% 93%;
+    --muted-foreground: 222 14% 36%;
+    --border: 220 20% 86%;
+    --input: 220 18% 78%;
+    --ring: 222 60% 30%;
 
-    --primary: 142 52% 50%;
-    --primary-foreground: 222 47% 7%;
-    --secondary: 210 80% 66%;
-    --secondary-foreground: 222 47% 7%;
-    --accent: 20 86% 62%;
-    --accent-foreground: 222 47% 7%;
-    --destructive: 0 80% 64%;
-    --destructive-foreground: 222 47% 7%;
+    --primary: 222 60% 14%;
+    --primary-foreground: 72 90% 62%;
+    --secondary: 214 70% 38%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 18 85% 40%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 352 75% 42%;
+    --destructive-foreground: 0 0% 100%;
 
-    --grass: 142 52% 50%;
-    --grass-foreground: 222 47% 7%;
-    --hard: 210 80% 66%;
-    --hard-foreground: 222 47% 7%;
-    --clay: 20 86% 62%;
-    --clay-foreground: 222 47% 7%;
-    --live: 352 85% 66%;
-    --live-foreground: 222 47% 7%;
+    --grass: 145 65% 26%;
+    --grass-foreground: 0 0% 100%;
+    --hard: 214 70% 38%;
+    --hard-foreground: 0 0% 100%;
+    --clay: 18 85% 40%;
+    --clay-foreground: 0 0% 100%;
+    --live: 352 75% 42%;
+    --live-foreground: 0 0% 100%;
 
-    --positive: 142 55% 58%;
-    --negative: 0 85% 70%;
-    --atp: 210 80% 70%;
-    --wta: 322 70% 72%;
+    --positive: 145 65% 26%;
+    --negative: 352 75% 40%;
+    --atp: 214 70% 38%;
+    --wta: 322 60% 38%;
+    --gold: 40 90% 30%;
+    --silver: 220 10% 38%;
+    --bronze: 25 60% 34%;
+
+    color-scheme: light;
   }
 
   * {
@@ -88,6 +101,10 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "tnum" 1, "cv11" 1;
+    background-image:
+      radial-gradient(60rem 30rem at 85% -10%, hsl(var(--secondary) / 0.10), transparent 60%),
+      radial-gradient(50rem 26rem at -10% 0%, hsl(var(--primary) / 0.07), transparent 60%);
+    background-attachment: fixed;
   }
 
   :focus-visible {
@@ -96,11 +113,23 @@
 }
 
 @layer utilities {
-  /* Subtle court-line texture for hero areas. */
-  .court-lines {
-    background-image:
-      linear-gradient(to right, hsl(var(--primary-foreground) / 0.12) 2px, transparent 2px),
-      linear-gradient(to bottom, hsl(var(--primary-foreground) / 0.12) 2px, transparent 2px);
-    background-size: 25% 50%;
+  /* Glassy elevated surface used for hero panels and sticky bars. */
+  .surface-glass {
+    background: linear-gradient(180deg, hsl(var(--card) / 0.92), hsl(var(--card) / 0.78));
+    backdrop-filter: blur(12px);
+  }
+
+  /* Hairline gradient border on top of a card. */
+  .edge-glow {
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--foreground) / 0.06),
+      0 10px 30px -12px hsl(222 60% 2% / 0.6);
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--grass)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 }

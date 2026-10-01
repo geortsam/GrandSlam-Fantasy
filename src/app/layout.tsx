@@ -7,7 +7,7 @@ import "./globals.css";
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const display = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
   variable: "--font-display",
   display: "swap",
 });
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9f7f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c111b" },
+    { media: "(prefers-color-scheme: light)", color: "#05080f" },
+    { media: "(prefers-color-scheme: dark)", color: "#05080f" },
   ],
 };
 

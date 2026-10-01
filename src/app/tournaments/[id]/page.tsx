@@ -26,7 +26,7 @@ export default async function TournamentPage({ params }: { params: Promise<{ id:
           <StatusBadge status={tournament.status} />
           <SurfaceBadge surface={tournament.surface} />
         </div>
-        <h1 className="mt-1 font-display text-3xl font-bold uppercase md:text-4xl">{tournament.name}</h1>
+        <h1 className="mt-1 font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">{tournament.name}</h1>
         <p className="text-muted-foreground">
           {tournament.location} · {formatDateRange(tournament.startsAt, tournament.endsAt)}
         </p>

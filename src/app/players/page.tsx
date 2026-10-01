@@ -57,7 +57,7 @@ export default async function PlayersPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold uppercase">Players</h1>
+          <h1 className="font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">Players</h1>
           <p className="text-muted-foreground">Rankings, surface records, form and fantasy salary.</p>
         </div>
         <TourToggle value={tour} />

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CopyInvite } from "@/components/copy-invite";
 import { Leaderboard } from "@/components/leaderboard";
+import { SectionTitle } from "@/components/page-header";
 import { StatusBadge, SurfaceBadge } from "@/components/tennis";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,17 +67,22 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="relative flex flex-wrap items-end justify-between gap-4 overflow-hidden rounded-2xl border bg-card p-6 edge-glow md:p-8">
+        <div className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-primary/15 blur-3xl" />
+        <div className="relative min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
             {leagueModeLabel(league)} · {tourModeLabel(league.tourMode)} · ${league.salaryCap}M cap ·{" "}
             {league.visibility === "PUBLIC" ? "Public" : "Private"}
           </p>
-          <h1 className="font-display text-3xl font-bold uppercase md:text-4xl">{league.name}</h1>
-          {me && <p className="text-muted-foreground">{me.teamName}</p>}
+          <h1 className="mt-1 font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">{league.name}</h1>
+          <p className="mt-2 text-muted-foreground">
+            {me ? <span className="font-semibold text-foreground">{me.teamName}</span> : null}
+            {me ? " · " : ""}
+            {league.members.length} managers
+          </p>
         </div>
         {me && current && current.status !== "COMPLETED" && (
-          <Button asChild size="lg" className="h-auto min-h-11 whitespace-normal py-2 text-left" variant={current.status === "UPCOMING" ? "accent" : "outline"}>
+          <Button asChild size="lg" className="relative h-auto min-h-11 whitespace-normal py-2 text-left" variant={current.status === "UPCOMING" ? "default" : "outline"}>
             <Link href={`/leagues/${league.id}/roster?t=${current.id}`}>
               <ClipboardList /> {current.status === "UPCOMING" ? "Set roster" : "View roster"} · {current.name}
             </Link>
@@ -90,7 +96,7 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
 
           {matchups.length > 0 && current && (
             <section>
-              <h2 className="mb-3 font-display text-xl font-bold uppercase">Matchups · {current.name}</h2>
+              <SectionTitle>Matchups · {current.name}</SectionTitle>
               <div className="grid gap-3 sm:grid-cols-2">
                 {matchups.map(({ home, away }) => {
                   const h = rowOf.get(home);
@@ -100,12 +106,12 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
                       <CardContent className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 pt-5 text-sm">
                         <div className="min-w-0">
                           <p className="truncate font-semibold">{h?.teamName}</p>
-                          <p className="font-display text-xl font-bold tabular-nums">{formatPoints(h?.currentPoints ?? 0)}</p>
+                          <p className="font-display text-3xl font-extrabold tabular-nums">{formatPoints(h?.currentPoints ?? 0)}</p>
                         </div>
-                        <span className="text-xs font-semibold text-muted-foreground">VS</span>
+                        <span className="rounded-full bg-primary px-2 py-1 font-display text-xs font-extrabold text-primary-foreground">VS</span>
                         <div className="min-w-0 text-right">
                           <p className="truncate font-semibold">{a?.teamName ?? "Bye"}</p>
-                          <p className="font-display text-xl font-bold tabular-nums">{a ? formatPoints(a.currentPoints) : "–"}</p>
+                          <p className="font-display text-3xl font-extrabold tabular-nums">{a ? formatPoints(a.currentPoints) : "–"}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -120,7 +126,7 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
           {me && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Invite friends</CardTitle>
+                <CardTitle className="font-display text-lg font-extrabold uppercase">Invite friends</CardTitle>
               </CardHeader>
               <CardContent>
                 <CopyInvite code={league.inviteCode} />
@@ -132,7 +138,7 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
           )}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Tournaments</CardTitle>
+              <CardTitle className="font-display text-lg font-extrabold uppercase">Tournaments</CardTitle>
             </CardHeader>
             <CardContent className="space-y-1 p-2 pt-0">
               {tournaments.map((t) => (

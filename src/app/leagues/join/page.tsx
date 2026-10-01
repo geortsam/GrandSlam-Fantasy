@@ -7,7 +7,7 @@ export default async function JoinPage() {
   await requireUser("/leagues/join");
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="mb-6 font-display text-3xl font-bold uppercase">Join a league</h1>
+      <h1 className="mb-6 font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">Join a league</h1>
       <JoinLeagueForm />
     </div>
   );

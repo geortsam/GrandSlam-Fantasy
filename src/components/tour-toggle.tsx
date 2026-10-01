@@ -20,7 +20,7 @@ export function TourToggle({ value }: { value: string }) {
     return `${pathname}?${next.toString()}`;
   };
   return (
-    <div role="group" aria-label="Tour" className="inline-flex rounded-md bg-muted p-1">
+    <div role="group" aria-label="Tour" className="inline-flex rounded-full border bg-card p-1">
       {OPTIONS.map((o) => (
         <Link
           key={o.value}
@@ -28,8 +28,8 @@ export function TourToggle({ value }: { value: string }) {
           scroll={false}
           aria-pressed={value === o.value}
           className={cn(
-            "rounded-sm px-3 py-1.5 text-sm font-semibold text-muted-foreground transition-colors",
-            value === o.value && "bg-card text-foreground shadow-sm",
+            "rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground",
+            value === o.value && "bg-primary text-primary-foreground hover:text-primary-foreground",
           )}
         >
           {o.label}

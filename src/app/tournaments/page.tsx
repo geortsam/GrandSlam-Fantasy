@@ -25,7 +25,7 @@ export default async function TournamentsPage({ searchParams }: { searchParams: 
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold uppercase">{currentSeason()} Tournaments</h1>
+          <h1 className="font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">{currentSeason()} Tournaments</h1>
           <p className="text-muted-foreground">Grand Slams and Masters 1000 events.</p>
         </div>
         <TourToggle value={tour} />
@@ -34,11 +34,12 @@ export default async function TournamentsPage({ searchParams }: { searchParams: 
         (g) =>
           g.items.length > 0 && (
             <section key={g.title}>
-              <h2 className="mb-3 font-display text-xl font-bold uppercase">{g.title}</h2>
+              <h2 className="mb-3 font-display text-2xl font-extrabold uppercase">{g.title}</h2>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {g.items.map((t) => (
                   <Link key={t.id} href={`/tournaments/${t.id}`} className="group">
-                    <Card className="h-full transition-shadow group-hover:shadow-md">
+                    <Card className="h-full overflow-hidden transition-colors group-hover:border-primary/50">
+                      <div className={`h-1.5 ${t.surface === "CLAY" ? "bg-clay" : t.surface === "GRASS" ? "bg-grass" : "bg-hard"}`} />
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CategoryLabel category={t.category} />

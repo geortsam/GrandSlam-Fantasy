@@ -19,7 +19,7 @@ export default async function LeaguesPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold uppercase">Public leagues</h1>
+          <h1 className="font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">Public leagues</h1>
           <p className="text-muted-foreground">Open to anyone. Private leagues need an invite link or code.</p>
         </div>
         <div className="flex gap-2">
@@ -42,7 +42,7 @@ export default async function LeaguesPage() {
           {leagues.map((l) => {
             const full = l._count.members >= l.maxMembers;
             return (
-              <Card key={l.id} className="flex flex-col">
+              <Card key={l.id} className="flex flex-col transition-colors hover:border-primary/50">
                 <CardHeader>
                   <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {leagueModeLabel(l)} · {tourModeLabel(l.tourMode)}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { Crown, Search, Shuffle, Trash2, X } from "lucide-react";
+import { Search, Shuffle, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input, Select } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { autoPick } from "@/lib/domain/autopick";
@@ -17,6 +17,8 @@ import type { SlotType, Tour } from "@/lib/domain/types";
 import { cn, formatPoints, formatSalary } from "@/lib/utils";
 import { FormError, readError } from "./form-error";
 import { LockCountdown } from "./lock-countdown";
+import { Court } from "./court";
+import { PlayerAvatar } from "./player-avatar";
 import { FormGuide, StatusBadge, SurfaceBadge, TourBadge } from "./tennis";
 
 export interface BuilderPlayer {
@@ -39,7 +41,6 @@ interface Pick {
   salary: number;
 }
 
-const SLOT_LABEL: Record<SlotType, string> = { CAPTAIN: "Captains · 1.5x", STARTER: "Starters", BENCH: "Bench" };
 const SLOT_ORDER: SlotType[] = ["CAPTAIN", "STARTER", "BENCH"];
 
 export function RosterBuilder({
@@ -119,6 +120,14 @@ export function RosterBuilder({
   });
   const saveErr = save.error as { error?: string; details?: string[] } | null;
 
+  const ofSlot = (slot: SlotType) => picks.filter((p) => p.slot === slot);
+  const tourOf = (p: Pick) => byId.get(p.playerId)?.tour ?? "ATP";
+  // Mixed lineups put ATP on the left of the net and WTA on the right.
+  const starters = mixed ? arrangeByTour(ofSlot("STARTER"), tourOf, 2) : ofSlot("STARTER");
+  const captains = mixed ? arrangeByTour(ofSlot("CAPTAIN"), tourOf, 1) : ofSlot("CAPTAIN");
+  const bench = ofSlot("BENCH");
+  const slotProps = { byId, locked, onRemove: remove, onMove: move };
+
   const pool = players
     .filter((p) => tourFilter === "ALL" || p.tour === tourFilter)
     .filter((p) => !query || p.name.toLowerCase().includes(query.toLowerCase()))
@@ -139,7 +148,9 @@ export function RosterBuilder({
           <Link href={`/leagues/${league.id}`} className="text-sm text-muted-foreground hover:underline">
             ← {league.name}
           </Link>
-          <h1 className="font-display text-3xl font-bold uppercase">{tournament.name} roster</h1>
+          <h1 className="mt-1 font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">
+            {tournament.name} <span className="text-primary">lineup</span>
+          </h1>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <SurfaceBadge surface={tournament.surface} />
             <StatusBadge status={tournament.status} />
@@ -167,7 +178,7 @@ export function RosterBuilder({
         )}
       </div>
 
-      <Card className="sticky top-[6.5rem] z-30 md:top-16">
+      <Card className="surface-glass sticky top-[6.75rem] z-30 md:top-[4.5rem]">
         <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
           <LockCountdown startsAt={tournament.startsAt} onLock={onLock} />
           <div className="min-w-[200px] flex-1">
@@ -194,7 +205,7 @@ export function RosterBuilder({
             </div>
           </div>
           {locked ? (
-            <p className="font-display text-2xl font-bold tabular-nums">{formatPoints(totalPoints)} pts</p>
+            <p className="font-display text-3xl font-extrabold tabular-nums text-primary">{formatPoints(totalPoints)} pts</p>
           ) : (
             <div className="flex gap-2">
               <Button
@@ -239,65 +250,43 @@ export function RosterBuilder({
         </ul>
       )}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
-        <section aria-label="Your roster" className="min-w-0 space-y-4">
-          {SLOT_ORDER.map((slot) => (
-            <Card key={slot}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-between text-base">
-                  <span className="flex items-center gap-1.5">
-                    {slot === "CAPTAIN" && <Crown className="size-4 text-accent" aria-hidden="true" />}
-                    {SLOT_LABEL[slot]}
-                  </span>
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {count(slot)}/{ROSTER_SHAPE[slot]}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {picks
-                  .filter((p) => p.slot === slot)
-                  .map((pk) => {
-                    const p = byId.get(pk.playerId);
-                    if (!p) return null;
-                    return (
-                      <div key={pk.playerId} className="flex items-center gap-2 rounded-md border p-2">
-                        <TourBadge tour={p.tour} />
-                        <div className="min-w-0 flex-1">
-                          <p className={cn("truncate text-sm font-semibold", p.eliminated && "line-through decoration-2")}>{p.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatSalary(pk.salary)}
-                            {locked && ` · ${formatPoints(p.points * slotMultiplier(slot))} pts`}
-                          </p>
-                        </div>
-                        {!locked && (
-                          <>
-                            <Select
-                              aria-label={`Move ${p.name}`}
-                              className="h-8 w-[6.5rem] px-2 text-xs"
-                              value={slot}
-                              onChange={(e) => move(p.id, e.target.value as SlotType)}
-                            >
-                              <option value="CAPTAIN">Captain</option>
-                              <option value="STARTER">Starter</option>
-                              <option value="BENCH">Bench</option>
-                            </Select>
-                            <Button variant="ghost" size="icon" className="size-8" aria-label={`Remove ${p.name}`} onClick={() => remove(p.id)}>
-                              <X />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    );
-                  })}
-                {Array.from({ length: Math.max(0, ROSTER_SHAPE[slot] - count(slot)) }).map((_, i) => (
-                  <div key={i} className="rounded-md border border-dashed p-3 text-center text-xs text-muted-foreground">
-                    Empty {slot.toLowerCase()} slot
-                  </div>
+      <div className="space-y-6">
+        <section aria-label="Your lineup">
+          <Court surface={tournament.surface} className="border edge-glow">
+            <div className="grid grid-cols-3 gap-2 p-3 sm:gap-4 sm:p-6 md:px-[10%] md:py-10">
+              <div className="grid place-items-center gap-3 sm:gap-6">
+                {[0, 1].map((i) => (
+                  <CourtSlot key={i} slot="STARTER" pick={starters[i]} hint={mixed ? "ATP starter" : "Starter"} {...slotProps} />
                 ))}
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+              <div className="grid place-items-center content-center gap-3 sm:gap-6">
+                {[0, 1].map((i) => (
+                  <CourtSlot
+                    key={i}
+                    slot="CAPTAIN"
+                    pick={captains[i]}
+                    hint={mixed ? (i === 0 ? "ATP captain" : "WTA captain") : "Captain"}
+                    {...slotProps}
+                  />
+                ))}
+              </div>
+              <div className="grid place-items-center gap-3 sm:gap-6">
+                {[2, 3].map((i) => (
+                  <CourtSlot key={i} slot="STARTER" pick={starters[i]} hint={mixed ? "WTA starter" : "Starter"} {...slotProps} />
+                ))}
+              </div>
+            </div>
+          </Court>
+          <div className="mt-3 rounded-xl border border-dashed bg-card/60 p-3">
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+              Bench · scores 0 unless moved into the lineup before the lock
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(2,10.5rem)]">
+              {[0, 1].map((i) => (
+                <CourtSlot key={i} slot="BENCH" pick={bench[i]} hint="Bench" {...slotProps} />
+              ))}
+            </div>
+          </div>
         </section>
 
         <section aria-label="Player pool" className="min-w-0">
@@ -350,12 +339,12 @@ export function RosterBuilder({
                   return (
                     <TableRow key={p.id} className={cn(picked && "bg-primary/5")}>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <TourBadge tour={p.tour} />
+                        <div className="flex items-center gap-3">
+                          <PlayerAvatar name={p.name} tour={p.tour} country={p.country} size="sm" />
                           <div className="min-w-0">
                             <p className={cn("truncate font-semibold", p.eliminated && "text-muted-foreground line-through")}>{p.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              #{p.rank} · {p.country}
+                            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <TourBadge tour={p.tour} /> #{p.rank} · {p.country}
                               {p.seed ? ` · Seed ${p.seed}` : ""}
                             </p>
                           </div>
@@ -378,7 +367,15 @@ export function RosterBuilder({
                               {SLOT_ORDER.map((slot) => (
                                 <Button
                                   key={slot}
-                                  variant={slot === "CAPTAIN" ? "accent" : slot === "STARTER" ? "default" : "outline"}
+                                  variant={
+                                    !affordable || count(slot) >= ROSTER_SHAPE[slot]
+                                      ? "outline"
+                                      : slot === "CAPTAIN"
+                                        ? "accent"
+                                        : slot === "STARTER"
+                                          ? "default"
+                                          : "secondary"
+                                  }
                                   size="sm"
                                   className="h-8 px-2 text-xs"
                                   disabled={!affordable || count(slot) >= ROSTER_SHAPE[slot]}
@@ -405,4 +402,104 @@ export function RosterBuilder({
       </div>
     </div>
   );
+}
+
+function CourtSlot({
+  slot,
+  pick,
+  hint,
+  byId,
+  locked,
+  onRemove,
+  onMove,
+}: {
+  slot: SlotType;
+  pick?: Pick;
+  hint: string;
+  byId: Map<string, BuilderPlayer>;
+  locked: boolean;
+  onRemove: (id: string) => void;
+  onMove: (id: string, slot: SlotType) => void;
+}) {
+  const player = pick ? byId.get(pick.playerId) : undefined;
+  if (!pick || !player) {
+    return (
+      <div className="flex min-h-[5.5rem] w-full max-w-[10.5rem] flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-white/40 bg-black/20 p-2 text-center text-white/90">
+        <span className="flex size-9 items-center justify-center rounded-full border-2 border-dashed border-white/50 text-lg font-bold" aria-hidden="true">
+          +
+        </span>
+        <span className="text-[11px] font-bold uppercase tracking-wider">{hint}</span>
+      </div>
+    );
+  }
+  const surname = player.name.split(" ").slice(-1)[0];
+  return (
+    <div
+      className={cn(
+        "relative flex min-h-[5.5rem] w-full max-w-[10.5rem] flex-col items-center gap-1 rounded-xl border bg-background/85 p-2 text-center shadow-lg backdrop-blur",
+        slot === "CAPTAIN" ? "border-primary shadow-glow" : "border-white/15",
+        player.eliminated && "opacity-60",
+      )}
+    >
+      {slot === "CAPTAIN" && (
+        <span className="absolute -left-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-primary font-display text-xs font-extrabold text-primary-foreground" title="Captain, 1.5x points">
+          C
+        </span>
+      )}
+      {!locked && (
+        <button
+          type="button"
+          onClick={() => onRemove(player.id)}
+          aria-label={`Remove ${player.name}`}
+          className="absolute right-1 top-1 rounded-full p-1 text-muted-foreground hover:bg-elevated hover:text-foreground"
+        >
+          <X className="size-3.5" />
+        </button>
+      )}
+      <PlayerAvatar name={player.name} tour={player.tour} country={player.country} size="md" />
+      <p className={cn("w-full truncate text-xs font-bold sm:text-sm", player.eliminated && "line-through")} title={player.name}>
+        <span className="sm:hidden">{surname}</span>
+        <span className="hidden sm:inline">{player.name}</span>
+      </p>
+      <p className="text-[11px] font-semibold text-muted-foreground">
+        {locked ? (
+          <span className="font-bold text-primary">{formatPoints(player.points * slotMultiplier(slot))} pts</span>
+        ) : (
+          formatSalary(pick.salary)
+        )}
+      </p>
+      {!locked && (
+        <select
+          aria-label={`Move ${player.name}`}
+          value={slot}
+          onChange={(e) => onMove(player.id, e.target.value as SlotType)}
+          className="mt-0.5 h-6 w-full max-w-[7rem] rounded-md border border-input bg-elevated px-1 text-[11px] font-semibold"
+        >
+          <option value="CAPTAIN">Captain</option>
+          <option value="STARTER">Starter</option>
+          <option value="BENCH">Bench</option>
+        </select>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Places picks into fixed positions: `perTour` ATP spots, then `perTour` WTA
+ * spots. Extra picks of one tour (mid-edit) fill whatever spots are left.
+ */
+function arrangeByTour(picks: Pick[], tourOf: (p: Pick) => Tour, perTour: number): (Pick | undefined)[] {
+  const out: (Pick | undefined)[] = Array(perTour * 2).fill(undefined);
+  const overflow: Pick[] = [];
+  for (const p of picks) {
+    const base = tourOf(p) === "ATP" ? 0 : perTour;
+    const free = [...Array(perTour).keys()].map((i) => base + i).find((i) => !out[i]);
+    if (free === undefined) overflow.push(p);
+    else out[free] = p;
+  }
+  for (const p of overflow) {
+    const free = out.findIndex((x) => !x);
+    if (free >= 0) out[free] = p;
+  }
+  return out;
 }

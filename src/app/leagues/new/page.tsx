@@ -14,7 +14,7 @@ export default async function NewLeaguePage() {
   });
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-6 font-display text-3xl font-bold uppercase">Create a league</h1>
+      <h1 className="mb-6 font-display text-4xl font-extrabold uppercase italic leading-none md:text-5xl">Create a league</h1>
       <CreateLeagueForm
         tournaments={tournaments.map((t) => ({ ...t, startsAt: t.startsAt.toISOString() }))}
       />

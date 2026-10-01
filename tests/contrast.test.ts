@@ -51,9 +51,15 @@ const PAIRS: Array<[string, string]> = [
   ["primary", "card"],
   ["accent", "card"],
   ["live", "card"],
+  ["muted-foreground", "elevated"],
+  ["foreground", "elevated"],
+  ["gold", "card"],
+  ["silver", "card"],
+  ["bronze", "card"],
+  ["primary", "background"],
 ];
 
-describe.each([":root", ".dark"])("%s tokens meet WCAG AA", (selector) => {
+describe.each([":root", ".light"])("%s tokens meet WCAG AA", (selector) => {
   const tokens = block(selector);
   it.each(PAIRS)("%s on %s is at least 4.5:1", (fg, bg) => {
     expect(tokens.get(fg), fg).toBeDefined();
