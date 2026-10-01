@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * GrandSlam Fantasy design tokens: a court-inspired palette.
+ * Grass Green (primary), Hardcourt Blue (secondary), Clay Orange (accent).
+ * Values are HSL channels. Every foreground/background pair is checked for
+ * WCAG AA contrast (4.5:1) by tests/contrast.test.ts.
+ */
+@layer base {
+  :root {
+    --background: 45 33% 97%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --muted: 45 20% 92%;
+    --muted-foreground: 220 12% 34%;
+    --border: 40 14% 84%;
+    --input: 40 14% 78%;
+    --ring: 142 58% 28%;
+
+    --primary: 142 58% 26%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 66% 33%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 16 72% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --grass: 142 58% 26%;
+    --grass-foreground: 0 0% 100%;
+    --hard: 213 66% 33%;
+    --hard-foreground: 0 0% 100%;
+    --clay: 16 72% 38%;
+    --clay-foreground: 0 0% 100%;
+    --live: 352 78% 40%;
+    --live-foreground: 0 0% 100%;
+
+    --positive: 142 64% 24%;
+    --negative: 0 72% 38%;
+    --atp: 213 66% 33%;
+    --wta: 322 60% 36%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 32% 7%;
+    --foreground: 45 25% 95%;
+    --card: 222 28% 11%;
+    --card-foreground: 45 25% 95%;
+    --muted: 222 22% 17%;
+    --muted-foreground: 220 14% 72%;
+    --border: 222 18% 22%;
+    --input: 222 18% 30%;
+    --ring: 142 52% 50%;
+
+    --primary: 142 52% 50%;
+    --primary-foreground: 222 47% 7%;
+    --secondary: 210 80% 66%;
+    --secondary-foreground: 222 47% 7%;
+    --accent: 20 86% 62%;
+    --accent-foreground: 222 47% 7%;
+    --destructive: 0 80% 64%;
+    --destructive-foreground: 222 47% 7%;
+
+    --grass: 142 52% 50%;
+    --grass-foreground: 222 47% 7%;
+    --hard: 210 80% 66%;
+    --hard-foreground: 222 47% 7%;
+    --clay: 20 86% 62%;
+    --clay-foreground: 222 47% 7%;
+    --live: 352 85% 66%;
+    --live-foreground: 222 47% 7%;
+
+    --positive: 142 55% 58%;
+    --negative: 0 85% 70%;
+    --atp: 210 80% 70%;
+    --wta: 322 70% 72%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  /* Subtle court-line texture for hero areas. */
+  .court-lines {
+    background-image:
+      linear-gradient(to right, hsl(var(--primary-foreground) / 0.12) 2px, transparent 2px),
+      linear-gradient(to bottom, hsl(var(--primary-foreground) / 0.12) 2px, transparent 2px);
+    background-size: 25% 50%;
+  }
+}
