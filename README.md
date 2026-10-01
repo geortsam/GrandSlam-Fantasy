@@ -179,7 +179,7 @@ sequenceDiagram
   A-->>C: 200 { totalSalary }
 ```
 
-**Live scoring** runs every minute (see [Scoring pipeline](#scoring-pipeline)). Browsers on a league page poll `GET /api/leagues/:id/leaderboard` every 15 seconds while a tournament is live and every 2 minutes otherwise.
+**Live scoring** polls every few minutes (see [Scoring pipeline](#scoring-pipeline)). Browsers on a league page poll `GET /api/leagues/:id/leaderboard` every 15 seconds while a tournament is live and every 2 minutes otherwise.
 
 ### Caching
 
@@ -309,7 +309,8 @@ Useful scripts:
 
 | Variable | Required | Notes |
 | --- | --- | --- |
-| `DATABASE_URL` | yes | PostgreSQL connection string |
+| `DATABASE_URL` | yes | PostgreSQL connection string (on Supabase, the transaction pooler with `?pgbouncer=true&connection_limit=1`) |
+| `DIRECT_URL` | yes | Connection for migrations: same as `DATABASE_URL` locally, the session pooler on Supabase |
 | `NEXTAUTH_SECRET` | yes | `openssl rand -base64 32` |
 | `NEXTAUTH_URL` | prod | Public URL of the app |
 | `GITHUB_ID`, `GITHUB_SECRET` | no | Enables GitHub sign-in |
@@ -321,6 +322,7 @@ Useful scripts:
 | `SEASON` | no | Season to sync; defaults to the current year |
 | `CRON_SECRET` | prod | Bearer token for `/api/cron/*` |
 | `REDIS_URL` or `KV_URL` | no | Redis / Vercel KV; in-memory cache when unset |
+| `SEED_DEMO_DATA` | no | `true` runs the idempotent demo seed on each production build |
 
 ---
 
@@ -352,12 +354,19 @@ Shared pieces: `PageHeader`, `SectionTitle`, `StatTile`, `PlayerAvatar` (tour-ti
 
 ## Deploying
 
-The app is built for Vercel:
+Production runs on Vercel with Postgres on Supabase.
 
-1. Create a hosted Postgres (Neon, Supabase or RDS) and a Redis (Vercel KV or Upstash).
-2. Import the repo in Vercel and set the variables from [Configuration](#configuration), with `ENABLE_DEMO_LOGIN=false`.
-3. Run `npm run db:deploy` against the production database once, then `npm run sync` to load the season.
-4. The crons in `vercel.json` start polling: `/api/cron/live` every minute, `/api/cron/sync` daily at 04:00 UTC.
+1. In Supabase, open **Connect** on the project and copy two strings: the **Transaction pooler** (port 6543) and the **Session pooler** (port 5432). Vercel builds have no IPv6, so the direct `db.<ref>.supabase.co` host does not work there.
+2. Import the repo in Vercel and set, for Production:
+   - `DATABASE_URL`: the transaction pooler string with `?pgbouncer=true&connection_limit=1` appended
+   - `DIRECT_URL`: the session pooler string
+   - `NEXTAUTH_SECRET` and `CRON_SECRET`: each `openssl rand -base64 32`
+   - `NEXTAUTH_URL`: the production URL, e.g. `https://grandslam-fantasy.vercel.app`
+   - optionally `ENABLE_DEMO_LOGIN=true` for a public demo, and `SEED_DEMO_DATA=true` to load demo leagues
+3. Deploy. `scripts/vercel-build.sh` runs `prisma migrate deploy` (and the seed when `SEED_DEMO_DATA=true`) on production builds only; preview builds never touch the database.
+4. Crons in `vercel.json` call `/api/cron/sync` daily at 04:00 UTC and `/api/cron/live` daily at 12:00 UTC, the most the Hobby plan allows. For live scoring, set the `APP_URL` and `CRON_SECRET` repository secrets in GitHub and `.github/workflows/live-scores.yml` polls `/api/cron/live` every 5 minutes. On Vercel Pro you can instead set the live cron to `* * * * *`.
+
+Functions run in `dub1` (Dublin) to sit next to a Supabase project in `eu-west-1`. The migrations enable row-level security on every table, so Supabase's Data API cannot read app data; Prisma connects as the table owner and is unaffected.
 
 `GET /api/health` returns 200 when the database is reachable.
 
