@@ -366,6 +366,8 @@ Production runs on Vercel with Postgres on Supabase.
 3. Deploy. `scripts/vercel-build.sh` runs `prisma migrate deploy` (and the seed when `SEED_DEMO_DATA=true`) on production builds only; preview builds never touch the database.
 4. Crons in `vercel.json` call `/api/cron/sync` daily at 04:00 UTC and `/api/cron/live` daily at 12:00 UTC, the most the Hobby plan allows. For live scoring, set the `APP_URL` and `CRON_SECRET` repository secrets in GitHub and `.github/workflows/live-scores.yml` polls `/api/cron/live` every 5 minutes. On Vercel Pro you can instead set the live cron to `* * * * *`.
 
+If the Supabase integration is installed on the Vercel project, its managed `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` take precedence over `DATABASE_URL` and `DIRECT_URL`, so password resets in Supabase need no manual edits.
+
 Functions run in `dub1` (Dublin) to sit next to a Supabase project in `eu-west-1`. The migrations enable row-level security on every table, so Supabase's Data API cannot read app data; Prisma connects as the table owner and is unaffected.
 
 `GET /api/health` returns 200 when the database is reachable.
