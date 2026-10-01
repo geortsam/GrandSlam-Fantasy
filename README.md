@@ -72,17 +72,16 @@ Running stats (aces, double faults, breaks) score while a match is in progress s
 
 ## Screens
 
-| Lineup builder on the court | Live head-to-head league |
-| --- | --- |
-| ![Lineup](docs/screenshots/roster.png) | ![League](docs/screenshots/h2h.png) |
-
-| Dashboard | Live scores |
-| --- | --- |
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Live scores](docs/screenshots/tournament-live.png) |
-
-| Mobile lineup | Mobile league |
-| --- | --- |
-| <img src="docs/screenshots/mobile-roster.png" width="300" alt="Mobile lineup"> | <img src="docs/screenshots/mobile-league.png" width="300" alt="Mobile league"> |
+<table>
+  <tr>
+    <td width="50%" align="center"><b>Lineup builder on the court</b><br><img src="docs/screenshots/roster.png" width="100%" alt="Lineup builder on the court"></td>
+    <td width="50%" align="center"><b>Live head-to-head league</b><br><img src="docs/screenshots/h2h.png" width="100%" alt="Live head-to-head league"></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Dashboard</b><br><img src="docs/screenshots/dashboard.png" width="100%" alt="Dashboard"></td>
+    <td width="50%" align="center"><b>Live scores</b><br><img src="docs/screenshots/tournament-live.png" width="100%" alt="Live scores"></td>
+  </tr>
+</table>
 
 - **Landing**: hero, live tournaments, how it works, scoring.
 - **Dashboard**: stat tiles, next lineup deadline with countdown, league cards with rank and points, live and upcoming events.
